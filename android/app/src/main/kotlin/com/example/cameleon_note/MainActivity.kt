@@ -1,4 +1,4 @@
-package com.example.cameleon_note
+package com.cameleonworks.cameleonnote
 
 import io.flutter.embedding.android.FlutterActivity
 

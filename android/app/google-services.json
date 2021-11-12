@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "719588438490",
+    "firebase_url": "https://cameleonnote-1f761.firebaseio.com",
+    "project_id": "cameleonnote-1f761",
+    "storage_bucket": "cameleonnote-1f761.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:719588438490:android:835fc7655b9875cff5d0e3",
+        "android_client_info": {
+          "package_name": "com.cameleonworks.cameleonnote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "719588438490-72vmj5gnkd69vs052j4dfo01t26bjggr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEVdPSQf-jEuL0mOxEkfyHRpp0C99umgw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "719588438490-72vmj5gnkd69vs052j4dfo01t26bjggr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
