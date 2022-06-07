@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "87101874979",
+    "project_id": "cameleon-note",
+    "storage_bucket": "cameleon-note.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:87101874979:android:607b8aad25339cf8e5e296",
+        "android_client_info": {
+          "package_name": "com.example.cameleon_note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "87101874979-202kqedf7don5lbmoj9rjdl9v71t0e74.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-x3_OdJXN73eFRYw5gBMG7L7I3was938"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "87101874979-202kqedf7don5lbmoj9rjdl9v71t0e74.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
