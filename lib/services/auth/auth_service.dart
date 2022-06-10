@@ -1,5 +1,5 @@
 import 'package:cameleon_note/services/auth/auth_user.dart';
-import 'package:cameleon_note/services/auth/exceptions.dart';
+import 'package:cameleon_note/services/auth/auth_exceptions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class IAuthService {

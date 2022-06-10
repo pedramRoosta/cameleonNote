@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 abstract class INavService {
   void pop();
   void push({required PageRouteInfo<dynamic> route});
+  void pushAndPopUntil({required PageRouteInfo<dynamic> route});
   BuildContext? get currentContext;
 }
 
@@ -29,6 +30,11 @@ class NavService implements INavService {
 
   @override
   BuildContext? get currentContext => _approuter.navigatorKey.currentContext;
+
+  @override
+  void pushAndPopUntil({required PageRouteInfo route}) {
+    _approuter.pushAndPopUntil(route, predicate: (_) => false);
+  }
 }
 
 class AuthGuard extends AutoRouteGuard {
@@ -38,7 +44,7 @@ class AuthGuard extends AutoRouteGuard {
     if (authService.currentUser != null) {
       resolver.next(true);
     } else {
-      router.pushAndPopUntil(const LoginRoute(), predicate: (_) => false);
+      router.pushAndPopUntil(const LoginRoute(), predicate: (_) => true);
     }
   }
 }

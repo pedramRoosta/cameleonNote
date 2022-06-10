@@ -1,11 +1,17 @@
-import 'dart:developer';
-
 import 'package:cameleon_note/helpers/dialog.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cameleon_note/services/auth/auth_service.dart';
+import 'package:cameleon_note/services/auth/auth_exceptions.dart';
+import 'package:cameleon_note/services/router/nav_service.dart';
+import 'package:cameleon_note/services/router/routes.dart';
+import 'package:cameleon_note/setup.dart';
 import 'package:flutter/material.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({
+    Key? key,
+  }) : super(key: key);
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -14,11 +20,15 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _emailCtrl;
   late TextEditingController _passwordCtrl;
+  late INavService _navService;
+  late IAuthService _authService;
   @override
   void initState() {
     super.initState();
     _emailCtrl = TextEditingController();
     _passwordCtrl = TextEditingController();
+    _navService = locateService<INavService>();
+    _authService = locateService<IAuthService>();
   }
 
   @override
@@ -67,30 +77,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 final password = _passwordCtrl.text;
                 if (email.isNotEmpty && password.isNotEmpty) {
                   try {
-                    final userCredential = await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                            email: email, password: password);
-                    if (userCredential.user!.emailVerified) {
-                      // Navigator.of(context).pushNamedAndRemoveUntil(
-                      //     Routes.homeRoute, (route) => false);
-                    } else {
-                      // Navigator.of(context).pushNamed(Routes.verifyEmailRoute);
+                    await _authService.loginWithEmailandPassword(
+                      email: email,
+                      password: password,
+                    );
+                    if (_authService.currentUser != null) {
+                      _navService.pushAndPopUntil(route: HomeRoute());
                     }
-                  } on FirebaseAuthException catch (e) {
-                    switch (e.code) {
-                      case 'invalid-email':
-                        log('Email is badly formatted!');
-                        break;
-                      case 'unknown':
-                        log('Maybe your firebase console is not allowed the authentication!');
-                        break;
-                      case 'user-not-found':
-                        log('User does not exist. Check your credentials.');
-                        break;
-                      default:
-                    }
+                  } on InvalidEmailAuthException catch (_) {
+                    showAppDialog(message: 'Invalid email is provided!');
+                  } on UserNotFoundAuthException catch (_) {
+                    showAppDialog(message: 'User not found!');
+                  } on GeneralAuthException catch (_) {
+                    showAppDialog(
+                        message:
+                            'Network error occurs, please try again later.');
                   } catch (e) {
-                    log(e.toString());
+                    showAppDialog(message: e.toString());
                   }
                 }
               },
@@ -98,8 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             TextButton(
               onPressed: () async {
-                // Navigator.of(context).pushNamed(Routes.registerRoute);
-                showAppDialog(message: 'A Simple Message', title: 'Warning');
+                _navService.push(route: const RegisterRoute());
               },
               child: const Text('Not yet registered? Register here.'),
             ),
