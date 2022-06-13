@@ -8,6 +8,8 @@ class DBUserNotFoundException implements Exception {}
 
 class DBNoteNotFoundException implements Exception {}
 
+class DBNoteUpdateFailedException implements Exception {}
+
 class DBUserAlreadyExistsException implements Exception {}
 
 class DBUnableToGetDocumentDirectoryException implements Exception {}

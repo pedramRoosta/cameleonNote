@@ -1,3 +1,5 @@
+import 'package:cameleon_note/helpers/date_time.dart';
+
 class DBNote {
   const DBNote({
     required int id,
@@ -32,8 +34,21 @@ class DBNote {
         title: map['title'] as String,
         text: map['text'] as String,
         time: map['time'] as String,
-        isSyncedWithCloud: (map['syncedWithCloud'] as int) == 1 ? true : false,
+        isSyncedWithCloud:
+            (map['isSyncedWithCloud'] as int) == 1 ? true : false,
       );
+  Map<String, Object?> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'title': title,
+      'text': text,
+      'time': Helper.toDateFormat(
+        date: DateTime.now(),
+      ),
+      'isSyncedWithCloud': isSyncedWithCloud ? 1 : 0,
+    };
+  }
 
   @override
   String toString() {
