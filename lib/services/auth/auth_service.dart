@@ -96,6 +96,8 @@ class AuthService implements IAuthService {
           throw GeneralAuthException();
         case 'user-not-found':
           throw UserNotFoundAuthException();
+        case 'wrong-password':
+          throw WrongPasswordAuthException();
         default:
           throw GeneralAuthException();
       }

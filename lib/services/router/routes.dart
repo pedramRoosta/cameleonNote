@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:cameleon_note/screens/note/new_note.dart';
 
-import 'package:cameleon_note/screens/home.dart';
+import 'package:cameleon_note/screens/note/notes.dart';
 import 'package:cameleon_note/screens/login.dart';
 import 'package:cameleon_note/screens/register.dart';
 import 'package:cameleon_note/screens/verify_email.dart';
@@ -10,10 +11,11 @@ import 'package:flutter/material.dart';
 part 'routes.gr.dart';
 
 abstract class Routes {
-  static const String homeRoute = '/';
+  static const String noteRoute = '/';
   static const String loginRoute = '/login';
   static const String verifyEmailRoute = '/verifyEmail';
   static const String registerRoute = '/register';
+  static const String newNoteRoute = '/new_note';
 }
 
 @MaterialAutoRouter(
@@ -25,8 +27,8 @@ abstract class Routes {
     ),
     AutoRoute(
       initial: true,
-      page: HomeScreen,
-      path: Routes.homeRoute,
+      page: NotesScreen,
+      path: Routes.noteRoute,
       guards: [AuthGuard],
     ),
     AutoRoute(
@@ -36,6 +38,11 @@ abstract class Routes {
     AutoRoute(
       page: VerifyEmailScreen,
       path: Routes.verifyEmailRoute,
+      guards: [AuthGuard],
+    ),
+    AutoRoute(
+      page: EditNoteScreen,
+      path: Routes.newNoteRoute,
       guards: [AuthGuard],
     )
   ],

@@ -1,4 +1,4 @@
-class DBNotOpenedException implements Exception {}
+class DBAlreadyOpenedException implements Exception {}
 
 class DBIsNotOpenException implements Exception {}
 

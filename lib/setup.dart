@@ -1,4 +1,5 @@
 import 'package:cameleon_note/services/auth/auth_service.dart';
+import 'package:cameleon_note/services/repository/repository_service.dart';
 import 'package:cameleon_note/services/router/nav_service.dart';
 import 'package:cameleon_note/services/router/routes.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -29,4 +30,7 @@ abstract class RegisterModule {
 
   @singleton
   INavService get navService => NavService(approuter: _appRouter);
+
+  @singleton
+  Repository get repoService => Repository();
 }

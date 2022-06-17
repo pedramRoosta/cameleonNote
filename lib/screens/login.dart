@@ -82,13 +82,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       password: password,
                     );
                     if (_authService.currentUser != null) {
-                      _navService.pushAndPopUntil(route: HomeRoute());
+                      _navService.pushAndPopUntil(route: const NotesRoute());
                     }
-                  } on InvalidEmailAuthException catch (_) {
+                  } on InvalidEmailAuthException {
                     showAppDialog(message: 'Invalid email is provided!');
-                  } on UserNotFoundAuthException catch (_) {
+                  } on UserNotFoundAuthException {
                     showAppDialog(message: 'User not found!');
-                  } on GeneralAuthException catch (_) {
+                  } on WrongPasswordAuthException {
+                    showAppDialog(
+                        message:
+                            'Wrong password, please check your credentials.');
+                  } on GeneralAuthException {
                     showAppDialog(
                         message:
                             'Network error occurs, please try again later.');

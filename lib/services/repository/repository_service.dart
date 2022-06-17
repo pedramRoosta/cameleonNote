@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cameleon_note/helpers/date_time.dart';
 import 'package:cameleon_note/services/repository/constants/constants.dart';
@@ -13,10 +14,17 @@ import 'package:path/path.dart';
 
 class Repository extends IRepository {
   Database? _database;
-
+  Repository() {
+    _noteCtrl = StreamController<List<DBNote>>.broadcast(
+      onListen: () {
+        _noteCtrl.sink.add(_notes);
+      },
+    );
+  }
   List<DBNote> _notes = [];
 
-  final _noteCtrl = StreamController<List<DBNote>>.broadcast();
+  late final StreamController<List<DBNote>> _noteCtrl;
+  Stream<List<DBNote>> get allNotes => _noteCtrl.stream;
 
   Future<void> _cacheNotes() async {
     final allNotes = await getAllNote();
@@ -27,10 +35,18 @@ class Repository extends IRepository {
   @override
   String get dbName => 'Notes.db';
 
+  Future<void> _ensureDbIsOpen() async {
+    try {
+      await open();
+    } on DBAlreadyOpenedException {
+      // Empty
+    }
+  }
+
   @override
   Future<void> open() async {
     if (_database != null) {
-      throw DBNotOpenedException();
+      throw DBAlreadyOpenedException();
     }
     try {
       final docPath = await getApplicationDocumentsDirectory();
@@ -40,10 +56,12 @@ class Repository extends IRepository {
 
       await db.execute(RepoConstants.createUserTable);
       await db.execute(RepoConstants.createNoteTable);
-      _cacheNotes();
+      await _cacheNotes();
     } on MissingPlatformDirectoryException catch (_) {
       throw DBUnableToGetDocumentDirectoryException();
-    } catch (_) {}
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Database _getDatabaseOrThrow() {
@@ -66,6 +84,7 @@ class Repository extends IRepository {
 
   @override
   Future<void> deleteUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(
       RepoConstants.userTableName,
@@ -78,6 +97,7 @@ class Repository extends IRepository {
   }
 
   Future<DBUser> createUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final listOfUser = await db.query(
       RepoConstants.userTableName,
@@ -99,6 +119,7 @@ class Repository extends IRepository {
   }
 
   Future<DBUser> getUser({required String email}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final listOfUser = await db.query(
       RepoConstants.userTableName,
@@ -118,6 +139,7 @@ class Repository extends IRepository {
     String title = '',
     String text = '',
   }) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final user = await getUser(email: owner.email);
     if (user != owner) {
@@ -141,6 +163,7 @@ class Repository extends IRepository {
   }
 
   Future<void> deleteNote({required DBNote note}) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final deletedCount = await db.delete(RepoConstants.noteTableName,
         where: 'id=?', whereArgs: [note.id]);
@@ -158,6 +181,7 @@ class Repository extends IRepository {
   }
 
   Future<int> deleteAllNote() async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     _notes = [];
     _updateStreamController();
@@ -183,8 +207,8 @@ class Repository extends IRepository {
   }
 
   Future<Iterable<DBNote>> getAllNote() async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
-    final notes = <DBNote>[];
     final noteList = await db.query(
       RepoConstants.noteTableName,
     );
@@ -198,6 +222,7 @@ class Repository extends IRepository {
     String? title,
     String? text,
   }) async {
+    await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
     final note = await getNote(noteId: noteId);
     final updatedCount = await db.update(
@@ -231,7 +256,7 @@ class Repository extends IRepository {
       return user;
     } on DBUserNotFoundException catch (_) {
       return await createUser(email: email);
-    } catch (_) {
+    } catch (e) {
       rethrow;
     }
   }

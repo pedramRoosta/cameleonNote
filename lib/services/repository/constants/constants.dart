@@ -3,7 +3,7 @@ abstract class RepoConstants {
   static const noteTableName = 'note';
 
   static const createNoteTable = '''
-         CREATE TABLE IF NOT EXISTS "$userTableName" (
+         CREATE TABLE IF NOT EXISTS "$noteTableName" (
             "id"	INTEGER NOT NULL,
             "userId"	INTEGER NOT NULL,
             "title"	TEXT,
@@ -15,7 +15,7 @@ abstract class RepoConstants {
           ); ''';
 
   static const createUserTable = '''
-          CREATE TABLE IF NOT EXISTS "$noteTableName" (
+          CREATE TABLE IF NOT EXISTS "$userTableName" (
             "id"	INTEGER NOT NULL,
             "email"	TEXT NOT NULL UNIQUE,
             PRIMARY KEY("id")
