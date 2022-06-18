@@ -13,6 +13,8 @@ Future<void> showAppDialog({
   required String message,
   DialogType dialogType = DialogType.info,
   String? title,
+  bool hasOk = false,
+  Function? okButton,
 }) {
   final navigator = locateService<INavService>();
   return showDialog(
@@ -25,6 +27,14 @@ Future<void> showAppDialog({
           onPressed: () => navigator.pop(),
           child: const Text('Dismiss'),
         ),
+        if (hasOk)
+          TextButton(
+            onPressed: () {
+              okButton?.call();
+              navigator.pop();
+            },
+            child: const Text('Ok'),
+          ),
       ],
     ),
   );

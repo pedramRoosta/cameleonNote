@@ -1,3 +1,3 @@
 abstract class GeneralConstant {
-  static const dateTimeFormat = 'yyyy-MM-dd | jj:mm';
+  static const dateTimeFormat = 'yyyy-MM-dd | H:mm';
 }

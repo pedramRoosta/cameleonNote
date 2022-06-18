@@ -1,10 +1,15 @@
 import 'dart:developer';
 
+import 'package:cameleon_note/services/router/nav_service.dart';
+import 'package:cameleon_note/services/router/routes.dart';
+import 'package:cameleon_note/setup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class VerifyEmailScreen extends StatelessWidget {
-  const VerifyEmailScreen({Key? key}) : super(key: key);
+  VerifyEmailScreen({Key? key}) : super(key: key);
+
+  final _navService = locateService<INavService>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +43,7 @@ class VerifyEmailScreen extends StatelessWidget {
             ),
             TextButton(
               onPressed: () async {
-                // Navigator.of(context).pushNamedAndRemoveUntil(
-                //     Routes.loginRoute, (route) => false);
+                _navService.pushAndPopUntil(route: const LoginRoute());
               },
               child: const Text('Verified? Log in here'),
             ),

@@ -58,7 +58,6 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
           switch (snapshot.connectionState) {
             case ConnectionState.done:
               {
-                print('done');
                 return Column(
                   children: [
                     TextField(
@@ -89,7 +88,6 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
               }
             default:
               {
-                print('waiting');
                 return const CircularProgressIndicator();
               }
           }
@@ -110,12 +108,21 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
     final user = _authService.currentUser!;
     final dbUser = await _repoService.getUser(email: user.email);
     try {
-      await _repoService.createNote(
-        owner: dbUser,
-        title: _titleCtrl.text,
-        text: _textCtrl.text,
-      );
+      if (widget._noteId == null) {
+        await _repoService.createNote(
+          owner: dbUser,
+          title: _titleCtrl.text,
+          text: _textCtrl.text,
+        );
+      } else {
+        await _repoService.updateNote(
+          noteId: widget._noteId!,
+          title: _titleCtrl.text,
+          text: _textCtrl.text,
+        );
+      }
       Fluttertoast.showToast(msg: 'Note is saved successfully.');
+      _navService.pop();
     } on Exception catch (_) {
       showAppDialog(message: 'Error in creating the note, try again later.');
     }

@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:cameleon_note/services/router/nav_service.dart';
+import 'package:cameleon_note/services/router/routes.dart';
+import 'package:cameleon_note/setup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -13,6 +16,8 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController _emailCtrl;
   late TextEditingController _passwordCtrl;
+  final _navService = locateService<INavService>();
+
   @override
   void initState() {
     super.initState();
@@ -76,9 +81,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             .then((value) => log('email has been sent kako'));
                       },
                     );
-
-                    // Navigator.of(context).pushNamedAndRemoveUntil(
-                    //     Routes.verifyEmailRoute, (_) => false);
+                    _navService.push(route: const VerifyEmailRoute());
                   } on FirebaseAuthException catch (e) {
                     switch (e.code) {
                       case 'invalid-email':
@@ -104,8 +107,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             ),
             TextButton(
               onPressed: () async {
-                // Navigator.of(context)
-                //     .pushNamedAndRemoveUntil(Routes.loginRoute, (_) => false);
+                _navService.pushAndPopUntil(route: const LoginRoute());
               },
               child: const Text('Already registered? login here.'),
             ),

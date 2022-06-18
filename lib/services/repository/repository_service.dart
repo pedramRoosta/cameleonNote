@@ -3,17 +3,16 @@ import 'dart:developer';
 
 import 'package:cameleon_note/helpers/date_time.dart';
 import 'package:cameleon_note/services/repository/constants/constants.dart';
+import 'package:cameleon_note/services/repository/extensions/list_filter.dart';
 import 'package:cameleon_note/services/repository/models/db_note.dart';
 import 'package:cameleon_note/services/repository/models/db_user.dart';
 import 'package:cameleon_note/services/repository/models/exceptions.dart';
-import 'package:cameleon_note/services/repository/repository.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart'
     show MissingPlatformDirectoryException, getApplicationDocumentsDirectory;
 import 'package:path/path.dart';
 
-class Repository extends IRepository {
-  Database? _database;
+class Repository {
   Repository() {
     _noteCtrl = StreamController<List<DBNote>>.broadcast(
       onListen: () {
@@ -21,10 +20,18 @@ class Repository extends IRepository {
       },
     );
   }
-  List<DBNote> _notes = [];
 
+  Database? _database;
+  DBUser? _dbUser;
+  List<DBNote> _notes = [];
   late final StreamController<List<DBNote>> _noteCtrl;
-  Stream<List<DBNote>> get allNotes => _noteCtrl.stream;
+  Stream<List<DBNote>> get allNotes => _noteCtrl.stream.filter((note) {
+        if (_dbUser != null) {
+          return note.userId == _dbUser!.id;
+        } else {
+          throw DBUserShouldBeSetBeforeReadingNotesException();
+        }
+      });
 
   Future<void> _cacheNotes() async {
     final allNotes = await getAllNote();
@@ -32,7 +39,6 @@ class Repository extends IRepository {
     _noteCtrl.add(_notes);
   }
 
-  @override
   String get dbName => 'Notes.db';
 
   Future<void> _ensureDbIsOpen() async {
@@ -43,7 +49,6 @@ class Repository extends IRepository {
     }
   }
 
-  @override
   Future<void> open() async {
     if (_database != null) {
       throw DBAlreadyOpenedException();
@@ -72,7 +77,6 @@ class Repository extends IRepository {
     }
   }
 
-  @override
   Future<void> close() async {
     if (_database == null) {
       throw DBIsNotOpenException();
@@ -82,7 +86,6 @@ class Repository extends IRepository {
     }
   }
 
-  @override
   Future<void> deleteUser({required String email}) async {
     await _ensureDbIsOpen();
     final db = _getDatabaseOrThrow();
@@ -250,14 +253,19 @@ class Repository extends IRepository {
     return updatedNote;
   }
 
-  Future<DBUser> getOrCreateUser({required String email}) async {
+  Future<DBUser> getOrCreateUser({
+    required String email,
+    bool setAsCurrentUser = true,
+  }) async {
+    late DBUser user;
     try {
-      final user = await getUser(email: email);
-      return user;
+      user = await getUser(email: email);
     } on DBUserNotFoundException catch (_) {
-      return await createUser(email: email);
+      user = await createUser(email: email);
     } catch (e) {
       rethrow;
     }
+    if (setAsCurrentUser) _dbUser = user;
+    return user;
   }
 }

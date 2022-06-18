@@ -1,3 +1,4 @@
+import 'package:cameleon_note/helpers/dialog.dart';
 import 'package:cameleon_note/helpers/popup_menu.dart';
 import 'package:cameleon_note/services/auth/auth_service.dart';
 import 'package:cameleon_note/services/repository/models/db_note.dart';
@@ -54,44 +55,13 @@ class _NotesScreenState extends State<NotesScreen> {
                     case ConnectionState.active:
                       if (snapshot.hasData) {
                         final notes = snapshot.data as List<DBNote>;
-                        print(notes);
-                        // return ListView.builder(
-                        //   itemCount: notes.length,
-                        //   itemBuilder: (context, i) {
-                        //     return Card(
-                        //       child: Text(
-                        //         i.toString(),
-                        //       ),
-                        //     );
-                        //   },
-                        // );
-                        return Wrap(
-                          children: List.generate(
-                            notes.length,
-                            (index) => SizedBox(
-                              width: 200,
-                              height: 200,
-                              child: Card(
-                                child: Container(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Column(
-                                    children: [
-                                      Text(
-                                        notes[index].title,
-                                        maxLines: 1,
-                                        softWrap: true,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Expanded(
-                                        child: Text(notes[index].text),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        );
+                        if (notes.isNotEmpty) {
+                          return _createNoteList(notes: notes);
+                        } else {
+                          return const Center(
+                            child: Text('Currently no text exists...'),
+                          );
+                        }
                       }
                       return const CircularProgressIndicator();
                     default:
@@ -104,6 +74,79 @@ class _NotesScreenState extends State<NotesScreen> {
           }
         },
       ),
+    );
+  }
+
+  Widget _createNoteList({required List<DBNote> notes}) {
+    return Wrap(
+      children: List.generate(notes.length, (index) {
+        final note = notes[index];
+        return SizedBox(
+          width: 200,
+          height: 200,
+          child: GestureDetector(
+            onTap: () {
+              _navService.push(route: EditNoteRoute(noteId: note.id));
+            },
+            child: Card(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      note.title,
+                      maxLines: 1,
+                      softWrap: true,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
+                      child: Text(
+                        note.text,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    color: Colors.amber.withOpacity(0.1),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          note.time,
+                          style: const TextStyle(
+                            color: Colors.purple,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            size: 20,
+                            color: Colors.purple,
+                          ),
+                          onPressed: () {
+                            showAppDialog(
+                              message:
+                                  'Are you sure you want to delete this item?',
+                              hasOk: true,
+                              okButton: () {
+                                _repoService.deleteNote(note: note);
+                              },
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      }),
     );
   }
 }

@@ -13,3 +13,5 @@ class DBNoteUpdateFailedException implements Exception {}
 class DBUserAlreadyExistsException implements Exception {}
 
 class DBUnableToGetDocumentDirectoryException implements Exception {}
+
+class DBUserShouldBeSetBeforeReadingNotesException implements Exception {}

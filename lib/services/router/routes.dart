@@ -1,5 +1,5 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:cameleon_note/screens/note/new_note.dart';
+import 'package:cameleon_note/screens/note/edit_note.dart';
 
 import 'package:cameleon_note/screens/note/notes.dart';
 import 'package:cameleon_note/screens/login.dart';
