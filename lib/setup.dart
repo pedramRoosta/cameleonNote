@@ -1,4 +1,5 @@
 import 'package:cameleon_note/services/auth/auth_service.dart';
+import 'package:cameleon_note/services/cloud/firebase_cloud_storage.dart';
 import 'package:cameleon_note/services/repository/repository_service.dart';
 import 'package:cameleon_note/services/router/nav_service.dart';
 import 'package:cameleon_note/services/router/routes.dart';
@@ -33,4 +34,7 @@ abstract class RegisterModule {
 
   @singleton
   Repository get repoService => Repository();
+
+  @singleton
+  FirebaseCloudStorage get cloudService => FirebaseCloudStorage();
 }
